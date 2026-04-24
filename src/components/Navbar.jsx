@@ -1,20 +1,106 @@
-import React from 'react'
-import {NavLink} from 'react-router-dom'
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
-  return (
-    <div className='fixed top-0 w-full z-50 bg-[#101828] backdrop-blur-xl flex justify-between items-center px-12 py-4 max-w-full shadow-[0_20px_50px_rgba(91,244,222,0.1)]'>
-      <span className='text-2xl font-black text-[#5bf4de] tracking-tighter font-headline'><a href="/">LEXICON</a></span>
-      <span className='hidden md:flex gap-10'>
-        <NavLink className= {({ isActive }) => isActive? "border-b-2 border-[#5bf4de] text-[#5bf4de] pb-1 font-manrope font-semibold tracking-tight" : "text-slate-400 font-medium hover:text-[#5bf4de] font-manrope tracking-tight" } to = "/">Home</NavLink>
-        <NavLink className= {({ isActive }) => isActive? "border-b-2 border-[#5bf4de] text-[#5bf4de] pb-1 font-manrope font-semibold tracking-tight" : "text-slate-400 font-medium hover:text-[#5bf4de] font-manrope tracking-tight" } to= "/translator">Translate</NavLink> 
-      </span>
-      <span className='flex items-center gap-6'>
-        <button className='text-slate-400 font-medium hover:text-[#5bf4de] transition-all font-manrope tracking-tight prototype-link-hover prototype-hotspot'><a href='/login'>Login</a></button>
-        <button className='bg-[#5bf4de] text-on-primary-container px-6 py-2 rounded-lg font-bold hover:scale-95 duration-200 ease-out'><a href='/signup'>Sign Up</a></button>
-      </span>
-    </div>
-  )
-}
+  const [isOpen, setIsOpen] = useState(false);
 
-export default Navbar
+  return (
+    <nav className="fixed top-0 w-full z-50 bg-[#101828] backdrop-blur-xl px-4 md:px-12 py-4 shadow-[0_20px_50px_rgba(91,244,222,0.1)]">
+
+      <div className="flex justify-between items-center">
+
+        {/* LOGO */}
+        <NavLink to="/" className="text-xl md:text-2xl font-black text-[#5bf4de]">
+          LEXICON
+        </NavLink>
+
+        {/* DESKTOP MENU */}
+        <div className="hidden md:flex gap-10">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive
+                ? "text-[#5bf4de] border-b-2 border-[#5bf4de]"
+                : "text-slate-400 hover:text-[#5bf4de]"
+            }
+          >
+            Home
+          </NavLink>
+
+          <NavLink
+            to="/translator"
+            className={({ isActive }) =>
+              isActive
+                ? "text-[#5bf4de] border-b-2 border-[#5bf4de]"
+                : "text-slate-400 hover:text-[#5bf4de]"
+            }
+          >
+            Translate
+          </NavLink>
+        </div>
+
+        {/* RIGHT SIDE */}
+        <div className="hidden md:flex items-center gap-6">
+          <NavLink to="/login" className="text-slate-400 hover:text-[#5bf4de]">
+            Login
+          </NavLink>
+
+          <NavLink
+            to="/signup"
+            className="bg-[#5bf4de] px-4 py-2 rounded-lg font-bold"
+          >
+            Sign Up
+          </NavLink>
+        </div>
+
+        {/* MOBILE MENU BUTTON */}
+        <button
+          className="md:hidden text-white text-2xl"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          ☰
+        </button>
+      </div>
+
+      {/* MOBILE MENU */}
+      {isOpen && (
+        <div className="mt-4 flex flex-col gap-4 md:hidden text-center">
+
+          <NavLink
+            to="/"
+            onClick={() => setIsOpen(false)}
+            className="text-slate-400 hover:text-[#5bf4de]"
+          >
+            Home
+          </NavLink>
+
+          <NavLink
+            to="/translator"
+            onClick={() => setIsOpen(false)}
+            className="text-slate-400 hover:text-[#5bf4de]"
+          >
+            Translate
+          </NavLink>
+
+          <NavLink
+            to="/login"
+            onClick={() => setIsOpen(false)}
+            className="text-slate-400 hover:text-[#5bf4de]"
+          >
+            Login
+          </NavLink>
+
+          <NavLink
+            to="/signup"
+            onClick={() => setIsOpen(false)}
+            className="bg-[#5bf4de] py-2 rounded-lg"
+          >
+            Sign Up
+          </NavLink>
+        </div>
+      )}
+    </nav>
+  );
+};
+
+export default Navbar;

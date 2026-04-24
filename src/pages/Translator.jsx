@@ -11,161 +11,109 @@ import dropdown from "../assets/icons8-drop-down-16.png";
 const Translator = () => {
   const [text, setText] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [language, setLanguage] = useState({
-    name: "Spanish",
-    code: "es",
-  });
+  const [language, setLanguage] = useState({ name: "Spanish", code: "es" });
   const [translatedText, setTranslatedText] = useState("");
   const [loading, setLoading] = useState(false);
 
   const languages = [
-  { name: "Spanish", code: "es" },
-  { name: "Hindi", code: "hi" },
-  { name: "French", code: "fr" },
-  { name: "German", code: "de" },
-  { name: "Italian", code: "it" },
-  { name: "Japanese", code: "ja" },
-  { name: "Korean", code: "ko" },
-  { name: "Chinese", code: "zh" },
-  { name: "Portuguese", code: "pt" },
-  { name: "Russian", code: "ru" },
-  { name: "Arabic", code: "ar" },
-];
+    { name: "Spanish", code: "es" },
+    { name: "Hindi", code: "hi" },
+    { name: "French", code: "fr" },
+    { name: "German", code: "de" },
+  ];
 
-// Speech to Text
-function handleSpeechToText() {
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
+  function handleSpeechToText() {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
 
-  if (!SpeechRecognition) {
-    alert("Speech Recognition not supported in this browser");
-    return;
+    if (!SpeechRecognition) return;
+
+    const recognition = new SpeechRecognition();
+    recognition.start();
+
+    recognition.onresult = (event) => {
+      const speechText = event.results[0][0].transcript;
+      setText((prev) => prev + " " + speechText);
+    };
+
+    setTimeout(() => recognition.stop(), 5000);
   }
 
-  const recognition = new SpeechRecognition();
-
-  recognition.lang = "en-US"; 
-  recognition.start();
-
-  recognition.onresult = (event) => {
-    const speechText = event.results[0][0].transcript;
-    setText((prev) => prev + " " + speechText);
-  };
-
-  recognition.onerror = (event) => {
-    console.error(event.error);
-  };
-
-  setTimeout(() => {
-    recognition.stop();
-  }, 5000);
-}
-
-// Paste Function
-async function handlePaste() {
-  try {
-    const clipboardText = await navigator.clipboard.readText();
-    setText(clipboardText);
-  } catch (error) {
-    console.error("Paste failed:", error);
+  async function handlePaste() {
+    const text = await navigator.clipboard.readText();
+    setText(text);
   }
-}
 
-  // 🔥 TRANSLATE FUNCTION
   async function translate() {
-  console.log("Button clicked");
+    if (!text) return;
 
-  if (!text) {
-    console.log("No text");
-    return;
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        `https://api.mymemory.translated.net/get?q=${text}&langpair=en|${language.code}`
+      );
+      setTranslatedText(res.data.responseData.translatedText);
+    } catch (e) {
+      console.log(e);
+    }
+    setLoading(false);
   }
 
-  try {
-    console.log("Sending request...");
-
-    const response = await axios.get(
-      `https://api.mymemory.translated.net/get?q=${text}&langpair=en|${language.code}`
-    );
-
-    console.log("Response:", response.data);
-
-    setTranslatedText(response.data.responseData.translatedText);
-  } catch (error) {
-    console.error("ERROR:", error);
+  function handleClear() {
+    setText("");
+    setTranslatedText("");
   }
-}
 
-// Clear Text
-function handleClear() {
-  setText("");
-  setTranslatedText("");
-}
+  function handleCopy() {
+    if (!translatedText) return;
+    navigator.clipboard.writeText(translatedText);
+  }
 
-// Copy Function
-function handleCopy() {
-  if (!translatedText) return;
-
-  navigator.clipboard.writeText(translatedText);
-}
-
-// Speak Function
-function handleSpeak() {
-  if (!translatedText) return;
-
-  speechSynthesis.cancel(); // stop previous speech
-
-  const utterance = new SpeechSynthesisUtterance(translatedText);
-  utterance.lang = language.code;
-
-  speechSynthesis.speak(utterance);
-}
+  function handleSpeak() {
+    if (!translatedText) return;
+    const utterance = new SpeechSynthesisUtterance(translatedText);
+    speechSynthesis.speak(utterance);
+  }
 
   return (
-    <main>
+    <main className="px-4 md:px-10 pt-20">
+
       {/* Heading */}
-      <div className="mx-8 pt-28">
-        <div className="font-mono">
-          <h1 className="text-white text-5xl font-bold pb-2">
-            Pure Linguistic
-          </h1>
-          <span className="text-[#5bf4de] text-5xl font-bold">
-            Illumination.
-          </span>
-        </div>
+      <div className="mb-8 text-center md:text-left">
+        <h1 className="text-3xl md:text-5xl text-white font-bold">
+          Pure Linguistic
+        </h1>
+        <span className="text-[#5bf4de] text-3xl md:text-5xl font-bold">
+          Illumination.
+        </span>
       </div>
 
-      <div className="p-8 md:p-12 min-h-[400px] grid grid-cols-2 gap-6">
-        
-        {/* LEFT SIDE */}
-        <div className="bg-[rgb(0,0,1)] rounded-md">
+      {/* GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        {/* LEFT */}
+        <div className="bg-black rounded-lg">
 
           {/* Header */}
-          <div className="flex items-center justify-between px-6 pt-4">
-            <div className="flex items-center gap-4">
-
-              <button className="text-[#a3aac4] px-4 py-1.5 text-[0.7rem] uppercase tracking-widest">
+          <div className="flex flex-wrap items-center justify-between px-4 pt-4 gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <button className="text-[#a3aac4] text-xs uppercase">
                 ENGLISH
               </button>
 
-              <img src={change} className="size-6" />
+              <img src={change} className="w-5" />
 
-              {/* DROPDOWN */}
               <div className="relative">
                 <button
                   onClick={() => setIsOpen(!isOpen)}
-                  className="bg-[#006a68] text-[#dafffc] px-6 py-1.5 rounded-full text-[0.7rem] uppercase tracking-widest flex items-center gap-2 hover:bg-[#2ccdc7]"
+                  className="bg-[#006a68] text-xs px-4 py-1 rounded-full flex items-center gap-2"
                 >
                   {language.name}
-                  <img
-                    src={dropdown}
-                    className={`w-3 transition-transform ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
-                  />
+                  <img src={dropdown} className="w-3" />
                 </button>
 
                 {isOpen && (
-                  <div className="absolute mt-2 w-full bg-white rounded-lg shadow-lg z-10">
+                  <div className="absolute mt-2 w-full bg-white rounded shadow z-10">
                     {languages.map((lang) => (
                       <div
                         key={lang.code}
@@ -183,62 +131,56 @@ function handleSpeak() {
               </div>
             </div>
 
-            <img src={close} className="cursor-pointer" onClick={handleClear}/>
+            <img src={close} onClick={handleClear} className="cursor-pointer w-5" />
           </div>
 
-          {/* Textarea */}
-          <div className="p-6">
+          {/* TEXTAREA */}
+          <div className="p-4">
             <textarea
-              className="w-full h-40 bg-transparent outline-none text-xl text-white resize-none"
-              placeholder="Enter text to translate..."
+              className="w-full h-32 md:h-40 bg-transparent text-white outline-none resize-none"
+              placeholder="Enter text..."
               value={text}
               onChange={(e) => setText(e.target.value)}
             />
           </div>
 
-          {/* Bottom */}
-          <div className="flex items-center justify-between px-6 pb-6">
-            <div className="flex gap-6">
-              <img src={mic} className="cursor-pointer" onClick={handleSpeechToText()}/>
-              <img src={upload} className="cursor-pointer" onClick={handlePaste}/>
+          {/* BOTTOM */}
+          <div className="flex justify-between items-center px-4 pb-4">
+            <div className="flex gap-4">
+              <img src={mic} onClick={handleSpeechToText} className="cursor-pointer w-5" />
+              <img src={upload} onClick={handlePaste} className="cursor-pointer w-5" />
             </div>
 
-            <span className="text-[0.65rem] text-stone-300 tracking-widest uppercase">
-              {text.length} / 5000
+            <span className="text-xs text-gray-400">
+              {text.length}/5000
             </span>
           </div>
         </div>
 
-        {/* RIGHT SIDE */}
-        <div className="bg-[#141f38] rounded-md p-6 flex flex-col justify-between">
+        {/* RIGHT */}
+        <div className="bg-[#141f38] rounded-lg p-4 flex flex-col justify-between">
 
           <div>
-            <div className="flex justify-between pb-6">
+            <div className="flex justify-between pb-4">
               <span className="text-[#5bf4de] text-sm">RESULT</span>
-
-              <div className="flex gap-6">
-                <img src={copy} onClick={handleCopy} className="cursor-pointer"/>
-                <img src={speaker} onClick={handleSpeak} className="cursor-pointer"/>
+              <div className="flex gap-4">
+                <img src={copy} onClick={handleCopy} className="cursor-pointer w-5" />
+                <img src={speaker} onClick={handleSpeak} className="cursor-pointer w-5" />
               </div>
             </div>
 
-            {/* OUTPUT */}
-            <div className="text-2xl text-[#48e5d0]">
+            <div className="text-lg md:text-2xl text-[#48e5d0]">
               {translatedText || "Translation will appear here..."}
             </div>
           </div>
 
-          {/* BUTTON */}
-          <div className="flex justify-end mt-6">
-            <button
-              onClick={translate}
-              disabled={loading}
-              className="bg-[#5bf4de] text-[#00594f] px-6 py-3 rounded-xl font-semibold hover:bg-[#3eddc5] transition"
-            >
-              {loading ? "Translating..." : "TRANSLATE"}
-            </button>
-          </div>
-
+          <button
+            onClick={translate}
+            disabled={loading}
+            className="mt-6 bg-[#5bf4de] text-black py-3 rounded-lg font-semibold"
+          >
+            {loading ? "Translating..." : "TRANSLATE"}
+          </button>
         </div>
       </div>
     </main>
