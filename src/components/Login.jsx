@@ -1,6 +1,17 @@
-import React from 'react'
+import React from "react";
+import { useState } from "react";
 
 const Login = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    function handleLogin(e) {
+        e.preventDefault();
+
+        console.log(email, password);
+
+        // later → API call here
+    }
     return (
         <main className='flex flex-col items-center'>
             <div className='justify-start mt-4 text-[#5bf4de] left-24'><a href='/'>Back to Home</a></div>
@@ -11,16 +22,16 @@ const Login = () => {
                 <div className='mb-8'>
                     <h2 className="font-mono text-3xl font-bold tracking-tight text-[#dee5ff]">Welcome Back</h2>
                 </div>
-                <form action="" className='space-y-6'>
+                <form onSubmit={handleLogin} className='space-y-6'>
                     <div className='space-y-2'>
                         <label className='font-mono text-sm uppercase tracking-widest text-[#6d758c] block ml-1'>Email</label>
-                        <input type="email" placeholder='Enter your E-mail ID' className='w-full bg-black border-none text-[#dee5ff] py-4 px-4 rounded-lg focus:ring-1 focus:ring-[#3b82f680] transition-all placeholder:text-[#3b82f680]' />
+                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder='Enter your E-mail ID' className='w-full bg-black border-none text-[#dee5ff] py-4 px-4 rounded-lg focus:ring-1 focus:ring-[#3b82f680] transition-all placeholder:text-[#3b82f680]' />
                     </div>
                     <div className='space-y-2'>
                         <label className='font-mono text-sm uppercase tracking-widest text-[#6d758c] block ml-1'>Password</label>
-                        <input type="password" placeholder="••••••••" className='w-full bg-black border-none text-[#dee5ff] py-4 px-4 rounded-lg focus:ring-1 focus:ring-[#3b82f680] transition-all placeholder:text-[#3b82f680]' />
+                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className='w-full bg-black border-none text-[#dee5ff] py-4 px-4 rounded-lg focus:ring-1 focus:ring-[#3b82f680] transition-all placeholder:text-[#3b82f680]' />
                     </div>
-                    <button className='w-full py-4 text-[#00594f] font-bold bg-[#11c9b4] rounded-lg shadow-[0_10px_20px_rgba(17,201,180,0.2)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer'>SIGN IN</button>
+                    <button className='w-full py-4 text-[#00594f] font-bold bg-[#11c9b4] rounded-lg shadow-[0_10px_20px_rgba(17,201,180,0.2)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 cursor-pointer' type="submit">SIGN IN</button>
                 </form>
                 <div className="relative my-8 text-center">
                     <span className="absolute inset-x-0 top-1/2 h-px bg-[#40485d4d]"></span>
@@ -36,9 +47,9 @@ const Login = () => {
                     Continue with Google
                 </button>
                 <p className="text-center mt-4 text-[#a3aac4] text-sm">
-                New to the Lexicon?
-                <a className="text-[#5bf4de] font-bold hover:text-[#19edcd] transition-colors ml-1" href="/signup">Create Account</a>
-            </p>
+                    New to the Lexicon?
+                    <a className="text-[#5bf4de] font-bold hover:text-[#19edcd] transition-colors ml-1" href="/signup">Create Account</a>
+                </p>
             </div>
         </main>
     )
